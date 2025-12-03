@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
-import { cookies } from "next/headers";
-import LogOutButton from "./login/LogOutButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,19 +22,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token");
   const IS_DEV_MODE = process.env.NODE_ENV !== "production";
-
-  const userRes = await fetch(`${process.env.API_URL}/auth/userFromToken`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token?.value}`,
-    },
-  });
-
-  const user = userRes.ok ? await userRes.json() : null;
 
   return (
     <html lang="en">
