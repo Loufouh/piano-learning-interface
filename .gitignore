@@ -3,3 +3,4 @@
 node_modules
 draft.json
 API/tests/prisma/test.db
+.next
