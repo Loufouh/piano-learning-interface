@@ -1,0 +1,5 @@
+.DS_Store
+.env
+node_modules
+draft.json
+API/tests/prisma/test.db
