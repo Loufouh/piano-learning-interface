@@ -32,7 +32,7 @@ export default function Game() {
         <>
             <canvas
                 className={clsx(
-                    `w-[${classHeight * ratio}] h-[${classHeight}]`,
+                    `w-[${classHeight * ratio}] h-[${classHeight}] rounded-full`,
                 )}
                 width={classHeight * ratio * scale}
                 height={classHeight * scale}
