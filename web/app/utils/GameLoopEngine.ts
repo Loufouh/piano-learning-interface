@@ -4,7 +4,7 @@ let playEnabled = false;
 
 export function drawControl(drawFunction: Function, ctx: CanvasRenderingContext2D, lastTime: number) {
     const time = Date.now();
-    const deltaTime = time - lastTime;
+    const deltaTime = .001 * (time - lastTime);
 
     drawFunction(ctx, deltaTime);
 

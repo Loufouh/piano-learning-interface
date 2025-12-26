@@ -23,12 +23,12 @@ export function draw(ctx: CanvasRenderingContext2D, deltaTime: number) {
 }
 
 function handleMetronome(deltaTime: number) {
-    const beatPeriod = 60000 / bpm;
+    const beatPeriod = 60 / bpm;
     timeSinceLastBeat += deltaTime;
 
-    if (timeSinceLastBeat > beatPeriod - 1) {
+    if (timeSinceLastBeat > beatPeriod - .001) {
         const timeDifference = timeSinceLastBeat - beatPeriod;
-        planAudio("Side Kick", .001 * timeDifference);
+        planAudio("Side Kick", timeDifference);
 
         timeSinceLastBeat -= beatPeriod;
         visualBeat_trigger = true;
@@ -48,7 +48,7 @@ let black = new Color(0, 0, 0);
 let t = 1;
 
 function handleVisualBeat(deltaTime: number, ctx: CanvasRenderingContext2D) {
-    t = Math.min(t + deltaTime*.001 , 1);
+    t = Math.min(t + deltaTime , 1);
     if (visualBeat_trigger) {
         visualBeat_trigger = false;
         t = 0;
