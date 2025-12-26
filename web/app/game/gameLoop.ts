@@ -26,9 +26,14 @@ function handleMetronome(deltaTime: number) {
     const beatPeriod = 60 / bpm;
     timeSinceLastBeat += deltaTime;
 
-    if (timeSinceLastBeat > beatPeriod - .001) {
+    if (timeSinceLastBeat > beatPeriod - 1) {
         const timeDifference = timeSinceLastBeat - beatPeriod;
-        planAudio("Side Kick", timeDifference);
+        
+        try {
+            planAudio("Side Kick", timeDifference);
+        } catch {
+            console.error("Failed to plan audio");
+        }
 
         timeSinceLastBeat -= beatPeriod;
         visualBeat_trigger = true;
