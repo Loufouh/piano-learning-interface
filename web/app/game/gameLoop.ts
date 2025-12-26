@@ -26,7 +26,7 @@ function handleMetronome(deltaTime: number) {
     const beatPeriod = 60 / bpm;
     timeSinceLastBeat += deltaTime;
 
-    if (timeSinceLastBeat > beatPeriod - 1) {
+    if (timeSinceLastBeat > beatPeriod - .025) {
         const timeDifference = timeSinceLastBeat - beatPeriod;
         
         try {
