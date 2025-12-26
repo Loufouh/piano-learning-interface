@@ -1,4 +1,4 @@
-import { loadAudio, planAudio, playAudio } from "../utils/audio";
+import { setupAudioContext, loadAudio, planAudio, playAudio } from "../utils/audio";
 import Color from "../utils/Color";
 
 const bpm = 120;
@@ -10,6 +10,8 @@ let touchTriggered: boolean;
 export function setup() {
     timeSinceLastBeat = 0;
     touchTriggered = false;
+
+    setupAudioContext();
 
     loadAudio("Ride Bell", "./audio/Ride Bell.mp3");
     loadAudio("Side Kick", "./audio/Snare Side Kick.mp3");

@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { startPlaying, stopPlaying } from "../utils/GameLoopEngine";
 import clsx from "clsx";
 import { draw, setup } from "./gameLoop";
 
-export default function GameCanvas() {
+export default function Game() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [ratio, setRatio] = useState(1);
 
-    const ratio = window.innerWidth / window.innerHeight;
     const scale = 30;
     const classHeight = 10;
+
+    useEffect(() => {
+        setRatio(window.innerWidth / window.innerHeight);
+    }, []);
 
     useEffect(() => {
         const ctx = canvasRef.current!.getContext("2d");

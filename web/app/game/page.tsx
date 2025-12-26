@@ -1,11 +1,11 @@
 "use server";
 
-import GameCanvas from "./GameCanvas";
+import GameManager from "./GameManager";
 
 export default async function Home() {
     return (
         <div className="flex justify-center">
-        <GameCanvas />
+            <GameManager />
         </div >
     );
 }
