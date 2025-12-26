@@ -1,7 +1,8 @@
-import { setupAudioContext, loadAudio, planAudio, playAudio } from "../utils/audio";
+import { planAudio, playAudio } from "../utils/audio";
 import Color from "../utils/Color";
+import { setupAudio, setupUserInput } from "./setupFunctions";
 
-const bpm = 120;
+const bpm = 60;
 
 let timeSinceLastBeat: number;
 let visualBeat_trigger: boolean;
@@ -11,15 +12,17 @@ export function setup() {
     timeSinceLastBeat = 0;
     touchTriggered = false;
 
-    setupAudioContext();
-
-    loadAudio("Ride Bell", "./audio/Ride Bell.mp3");
-    loadAudio("Side Kick", "./audio/Snare Side Kick.mp3");
-    loadAudio("Snare", "./audio/Snare.mp3");
-    loadAudio("Tom 10", "./audio/Tom 10.mp3");
+    setupAudio();
+    setupUserInput(() => touchTriggered = true);
 }
 
 export function draw(ctx: CanvasRenderingContext2D, deltaTime: number) {
+   handleMetronome(deltaTime);
+   handleTouchSound();
+   handleVisualBeat(deltaTime, ctx);
+}
+
+function handleMetronome(deltaTime: number) {
     const beatPeriod = 60000 / bpm;
     timeSinceLastBeat += deltaTime;
 
@@ -30,16 +33,27 @@ export function draw(ctx: CanvasRenderingContext2D, deltaTime: number) {
         timeSinceLastBeat -= beatPeriod;
         visualBeat_trigger = true;
     }
+}
 
+function handleTouchSound() {
     if (touchTriggered) {
         touchTriggered = false;
 
         playAudio("Tom 10");
     }
+}
 
-    if(visualBeat_trigger) {
+let white = new Color(255, 255, 255);
+let black = new Color(0, 0, 0);
+let t = 1;
+
+function handleVisualBeat(deltaTime: number, ctx: CanvasRenderingContext2D) {
+    t = Math.min(t + deltaTime*.001 , 1);
+    if (visualBeat_trigger) {
         visualBeat_trigger = false;
-        ctx.fillStyle = Color.random().toText();
-        ctx.fillRect(0, 0, 700, 700);
+        t = 0;
     }
+
+    ctx.fillStyle = Color.lerp(white, black, t).toText();
+    ctx.fillRect(0, 0, 700, 700);
 }
