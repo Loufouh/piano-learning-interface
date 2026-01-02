@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Soundfont, { type Player } from "soundfont-player";
-import Note from "./Notes/Note";
+import Note from "../../utils/Notes/Note";
 
 export default function Piano() {
 	const [pianoInstrument, setPianoInstrument] = useState<Player | null>(null);
