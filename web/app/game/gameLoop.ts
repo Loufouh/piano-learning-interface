@@ -1,8 +1,10 @@
 import { planAudio, playAudio } from "../utils/audio";
 import Color from "../utils/Color";
 import { setupAudio, setupUserInput } from "./setupFunctions";
+import {Vector2} from "../utils/Vector2";
 
-const bpm = 60;
+const bpm = 10;
+const beatPeriod = 60 / bpm;
 
 let timeSinceLastBeat: number;
 let visualBeat_trigger: boolean;
@@ -17,13 +19,34 @@ export function setup() {
 }
 
 export function draw(ctx: CanvasRenderingContext2D, deltaTime: number) {
-   handleMetronome(deltaTime);
-   handleTouchSound();
-   handleVisualBeat(deltaTime, ctx);
+    handleMetronome(deltaTime);
+    handleTouchSound();
+    handleVisualBeat(deltaTime, ctx);
+
+    ctx.fillStyle = black.toText();
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    ctx.moveTo(0, ctx.canvas.height * .5);
+    ctx.lineTo(ctx.canvas.width, ctx.canvas.height * .5);
+    ctx.moveTo(ctx.canvas.width * .5, 0);
+    ctx.lineTo(ctx.canvas.width * .5, ctx.canvas.height);
+
+    ctx.strokeStyle = "rgb(0, 0, 255)";
+    ctx.lineWidth = 5;
+    ctx.stroke();
+
+    const startPoint = new Vector2(ctx.canvas.width, ctx.canvas.height * .5);
+    const endPoint = new Vector2(ctx.canvas.width * .5, ctx.canvas.height * .5);
+
+    const beatPos = Vector2.lerp(startPoint, endPoint, timeSinceLastBeat / beatPeriod);
+
+    ctx.beginPath();
+    ctx.arc(beatPos.x, beatPos.y, 20, 0, 2 * Math.PI);
+    ctx.fillStyle = white.toText();
+    ctx.fill();
 }
 
 function handleMetronome(deltaTime: number) {
-    const beatPeriod = 60 / bpm;
     timeSinceLastBeat += deltaTime;
 
     if (timeSinceLastBeat > beatPeriod - .025) {

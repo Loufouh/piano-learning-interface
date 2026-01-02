@@ -11,7 +11,7 @@ export default function GameManager() {
                 <Game />
             ) : (
                 <button
-                    className="bg-green-400 p-5 rounded text-white text-3xl"
+                    className="bg-green-400 p-5 rounded w-25 h-25 text-white text-3xl"
                     onClick={() => setIsStarted(true)}
                 >
                     Start
