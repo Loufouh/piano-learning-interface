@@ -30,8 +30,6 @@ export default class Interval {
 		const simplified = this.simplified();
 		const octaveCount = Math.floor(this.semitones / 12);
 
-		console.log(`[toString], semitones: ${this.semitones}`);
-
 		if (simplified.Semitones === 6) {
 			return `d${7 * octaveCount + 5}`;
 		}
@@ -69,33 +67,5 @@ export default class Interval {
 
 	public static fromNotes(note1: Note, note2: Note) {
 		return new Interval(note2.MidiCode - note1.MidiCode);
-	}
-
-	public static second() {
-		return new Interval(2);
-	}
-
-	public static third() {
-		return new Interval(4);
-	}
-
-	public static fourth() {
-		return new Interval(5);
-	}
-
-	public static fifth() {
-		return new Interval(7);
-	}
-
-	public static sixth() {
-		return new Interval(9);
-	}
-
-	public static seventh() {
-		return new Interval(11);
-	}
-
-	public static octave() {
-		return new Interval(12);
 	}
 }
