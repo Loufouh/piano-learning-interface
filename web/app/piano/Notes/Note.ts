@@ -1,4 +1,5 @@
 import { BASE_NOTES, type BaseNote } from "./BaseNote";
+import type Interval from "./Interval";
 
 export default class Note {
 	public static readonly A0_MIDI_CODE = 21;
@@ -17,10 +18,6 @@ export default class Note {
 		this.octave = Math.floor(noteIndex / 12);
 	}
 
-	public shiftBySemitones(shift: number): Note {
-		return new Note(this.MidiCode + shift);
-	}
-
 	public get BaseNote(): BaseNote {
 		return this.baseNote;
 	}
@@ -33,6 +30,14 @@ export default class Note {
 		return (
 			Note.A0_MIDI_CODE + BASE_NOTES.indexOf(this.baseNote) + 12 * this.octave
 		);
+	}
+
+	public transposeUp(interval: Interval): Note {
+		return new Note(this.MidiCode + interval.Semitones);
+	}
+
+	public transposeDown(interval: Interval): Note {
+		return new Note(this.MidiCode - interval.Semitones);
 	}
 
 	public toString(): string {
