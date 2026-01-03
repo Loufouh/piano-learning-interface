@@ -6,18 +6,38 @@ import Interval from "@/utils/Notes/Interval";
 import Note from "../../utils/Notes/Note";
 
 export default function Piano() {
+	const [audioContext, setAudioContext] = useState(new AudioContext());
 	const [pianoInstrument, setPianoInstrument] = useState<Player | null>(null);
 	const [note, setNote] = useState<Note>(Note.fromString("C4"));
 
+	const [keys, setKeys] = useState<Note[]>([]);
+
 	const createPiano = async () => {
-		const ctx = new AudioContext();
-		const piano = await Soundfont.instrument(ctx, "acoustic_grand_piano");
+		const piano = await Soundfont.instrument(
+			audioContext,
+			"acoustic_grand_piano",
+		);
 		setPianoInstrument(piano);
+
+		setKeys([
+			Note.fromString("C4"),
+			Note.fromString("D4"),
+			Note.fromString("E4"),
+			Note.fromString("F4"),
+			Note.fromString("G4"),
+			Note.fromString("A4"),
+			Note.fromString("B4"),
+		]);
 	};
 
 	const playNote = () => {
-		pianoInstrument?.play(note.toString());
-		console.log(`playing: ${note.toString()}`);
+		pianoInstrument?.play(note.toString(), 0, { gain: 0.99 });
+
+		pianoInstrument?.stop(audioContext.currentTime + 1);
+	};
+
+	const playKey = (key: Note) => {
+		pianoInstrument?.play(key.toString(), 0, { duration: 1 });
 	};
 
 	const transposeUp = () => {
@@ -41,6 +61,9 @@ export default function Piano() {
 
 			{pianoInstrument && (
 				<>
+					<div className="bg-blue-700 p-3 rounded w-13 font-bold text-white text-center">
+						{note.toString()}
+					</div>
 					<button
 						className="hover:bg-black m-3 p-2 border-3 hover:border-white rounded w-10 h-10 font-bold hover:text-white"
 						type="button"
@@ -62,6 +85,20 @@ export default function Piano() {
 					>
 						v
 					</button>
+					{keys.length > 0 && (
+						<div>
+							{keys.map((key) => (
+								<button
+									type="button"
+									key={key.toString()}
+									className="bg-white hover:bg-gray-300 border border-black w-10 h-10"
+									onClick={() => playKey(key)}
+								>
+									{key.toString()}
+								</button>
+							))}
+						</div>
+					)}
 				</>
 			)}
 		</div>
