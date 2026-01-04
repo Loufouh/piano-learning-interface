@@ -1,9 +1,8 @@
 "use client";
 
+import { Interval, Note } from "@loufouh/solfege";
 import { useState } from "react";
 import Soundfont, { type Player } from "soundfont-player";
-import Interval from "@/utils/Notes/Interval";
-import Note from "../../utils/Notes/Note";
 
 export default function Piano() {
 	const [audioContext, setAudioContext] = useState(new AudioContext());

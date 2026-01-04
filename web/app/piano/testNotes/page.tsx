@@ -1,8 +1,7 @@
 "use client";
 
+import { Interval, Note } from "@loufouh/solfege";
 import { useState } from "react";
-import Interval from "../../../utils/Notes/Interval";
-import Note from "../../../utils/Notes/Note";
 
 export default function piano() {
 	const [note, setNote] = useState<Note>(Note.fromString("C4"));
