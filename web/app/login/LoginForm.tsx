@@ -19,6 +19,8 @@ export default function LoginForm() {
 		const durationLimit_days = 3;
 
 		try {
+			setMessage("");
+
 			await login(email, password, durationLimit_days);
 
 			setMessageType(MessageType.Success);
@@ -33,9 +35,11 @@ export default function LoginForm() {
 
 	return (
 		<div className="flex flex-col items-center w-full">
-			<div className="w-80 font-bold text-center">
-				<MessageBox text={message} type={messageType} />
-			</div>
+			{message.length > 0 && (
+				<div className="w-80 font-bold text-center">
+					<MessageBox text={message} type={messageType} />
+				</div>
+			)}
 			<form
 				className="flex flex-col items-center gap-2 mt-4 w-100"
 				onSubmit={handleSubmit}
