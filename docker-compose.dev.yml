@@ -1,0 +1,23 @@
+services:
+  "piano-learning-web":
+    "container_name": "piano-learning-web"
+    image: node:alpine
+    volumes:
+      - "./web/:/app/"
+    working_dir: "/app/"
+    # command: sh -c "npm install && npm run build && npm run start"
+    command: sh -c "npm install && npm run dev"
+    restart: "unless-stopped"
+    ports: 
+      - "4000:4000"
+    networks:
+      - "piano-learning-internal"
+      - "piano-learning-bridge"
+    environment:
+      - API_URL=${API_URL}
+      - MANAGER_URL=${MANAGER_URL}
+    
+networks:
+  piano-learning-internal:
+    internal: true
+  piano-learning-bridge:
