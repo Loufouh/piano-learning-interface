@@ -8,15 +8,58 @@ services:
     # command: sh -c "npm install && npm run build && npm run start"
     command: sh -c "npm install && npm run dev"
     restart: "unless-stopped"
-    ports: 
+    ports:
       - "4000:4000"
     networks:
       - "piano-learning-internal"
       - "piano-learning-bridge"
     environment:
       - API_URL=${API_URL}
-      - MANAGER_URL=${MANAGER_URL}
-    
+
+    depends_on:
+      - "piano-learning-api"
+
+  "piano-learning-api":
+    "container_name": "piano-learning-api"
+    image: node:alpine
+    volumes:
+      - "./API/:/app/"
+    working_dir: "/app/"
+    command: sh -c "npm install && npx prisma generate && npx prisma db push --force-reset && npm run seed && npm run start"
+    restart: "unless-stopped"
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    networks:
+      - "piano-learning-internal"
+      - "piano-learning-bridge"
+    environment:
+      - DB_URL=${DB_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=3000
+      - TEST_MANAGER_PASSWORD=${TEST_MANAGER_PASSWORD}
+
+    depends_on:
+      - "piano-learning-database"
+
+  "piano-learning-database":
+    "container_name": "piano-learning-database"
+    image: postgres:alpine
+    restart: "unless-stopped"
+    shm_size: 128mb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - "piano-learning_postgres_data:/var/lib/postgresql/data/"
+    networks:
+      - "piano-learning-internal"
+
+volumes:
+  "piano-learning_postgres_data":
+
+
 networks:
   piano-learning-internal:
     internal: true

@@ -1,0 +1,43 @@
+{
+	"name": "api",
+	"version": "1.0.0",
+	"description": "",
+	"prisma": {
+		"seed": "ts-node prisma/seed.ts"
+	},
+	"scripts": {
+		"start": "NODE_ENV=production node server.js",
+		"seed": "prisma db seed",
+		"setup-test": "DB_URL=file:./test.db npx prisma db push --schema=tests/prisma/schema.test.prisma",
+		"test": "NODE_ENV=test DB_URL=file:./test.db JWT_SECRET=6d7906b1 node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
+	},
+	"jest": {
+		"testEnvironment": "node",
+		"testMatch": [
+			"**/tests/**/*.test.js"
+		]
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"@faker-js/faker": "^10.1.0",
+		"@prisma/client": "^6.19.0",
+		"bcrypt": "^6.0.0",
+		"cors": "^2.8.5",
+		"express": "^5.1.0",
+		"jsonwebtoken": "^9.0.2",
+		"prisma": "^6.19.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.39.2",
+		"eslint": "^9.39.2",
+		"globals": "^16.5.0",
+		"jest": "^30.2.0",
+		"supertest": "^7.1.4",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.9.3",
+		"uuid": "^13.0.0"
+	}
+}
