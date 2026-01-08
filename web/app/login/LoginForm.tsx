@@ -16,9 +16,10 @@ export default function LoginForm() {
 
 		const email = data.get("email") as string;
 		const password = data.get("password") as string;
+		const durationLimit_days = 3;
 
 		try {
-			await login(email, password);
+			await login(email, password, durationLimit_days);
 
 			setMessageType(MessageType.Success);
 			setMessage("Connexion réussie");

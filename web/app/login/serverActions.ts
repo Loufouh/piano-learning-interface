@@ -3,7 +3,11 @@
 import { cookies } from "next/headers";
 import { apiPost } from "@/utils/api";
 
-export async function login(email: string, password: string) {
+export async function login(
+	email: string,
+	password: string,
+	maxTokenDayAge: number = 1,
+) {
 	const response = await apiPost(`/auth/login`, {
 		email,
 		password,
@@ -24,7 +28,7 @@ export async function login(email: string, password: string) {
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
 			path: "/",
-			maxAge: 60 * 60 * 24, // 1 day
+			maxAge: 60 * 60 * 24 * maxTokenDayAge,
 		});
 	}
 }
