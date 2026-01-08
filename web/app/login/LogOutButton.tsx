@@ -1,21 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { logout } from "./serverActions";
 
 export default function LogOutButton() {
 	const router = useRouter();
 
-	function handleClick() {
-		fetch("/api/auth/logout", {
-			method: "POST",
-		}).then((res) => {
-			if (res.ok) {
-				router.refresh();
-			} else {
-				alert("La déconnection a echoué.");
-			}
-		});
-	}
+	const handleClick = async () => {
+		logout();
+		router.refresh();
+	};
 	return (
 		<button
 			type="button"

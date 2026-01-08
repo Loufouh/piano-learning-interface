@@ -1,73 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
+import { login } from "./serverActions";
 
 export default function LoginForm() {
-    const [form, setForm] = useState({
-        email: "",
-        password: ""
-    });
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const {name, value} = e.target;
+		const data = new FormData(e.currentTarget);
 
-        setForm(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    }
+		const email = data.get("email") as string;
+		const password = data.get("password") as string;
 
-    useEffect(() => {
-        const emailInput = document.querySelector<HTMLInputElement>("input[name=email]");
-        const passwordInput = document.querySelector<HTMLInputElement>("input[name=password]");
+		try {
+			await login(email, password);
+		} catch (_) {
+			alert("Erreur de connexion");
+		}
+	};
 
-        setForm({
-            email: emailInput?.value || "",
-            password: passwordInput?.value || ""
-        });
-    }, []);
-
-    function submit() {
-        fetch(`/api/auth/login`, {
-            method: "POST",
-            body: JSON.stringify({
-                email: form.email,
-                password: form.password
-            })
-        }).then(res => {
-            if (res.ok) {
-                window.location.href = "/";
-            }
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
-    return (
-        <form 
-            className="flex flex-col items-center gap-2 mt-4 w-100"
-            onSubmit={e => { e.preventDefault(); submit() }}
-        >
-            <input 
-                className="bg-[#e6effc] p-3 rounded"
-                placeholder="Email" 
-                name="email" 
-                type="email"
-                onChange={handleChange}
-            />
-            <input 
-                className="bg-[#e6effc] p-3 rounded"
-                placeholder="Mot de Passe" 
-                name="password" 
-                type="password"
-                onChange={handleChange}
-            />
-            <input 
-                className="bg-purple-500 active:bg-purple-800 p-3 rounded text-white cursor-pointer"
-                name="submit" 
-                type="submit" 
-                value="Se connecter"
-            />
-        </form>
-    );
+	return (
+		<form
+			className="flex flex-col items-center gap-2 mt-4 w-100"
+			onSubmit={handleSubmit}
+		>
+			<input
+				className="bg-[#e6effc] p-3 rounded"
+				placeholder="Email"
+				name="email"
+				type="email"
+			/>
+			<input
+				className="bg-[#e6effc] p-3 rounded"
+				placeholder="Mot de Passe"
+				name="password"
+				type="password"
+			/>
+			<input
+				className="bg-purple-500 active:bg-purple-800 p-3 rounded text-white cursor-pointer"
+				name="submit"
+				type="submit"
+				value="Se connecter"
+			/>
+		</form>
+	);
 }
