@@ -1,0 +1,29 @@
+{
+  "name": "piano-learning-interface",
+  "version": "0.1.0",
+  "description": "An interface for my piano students, with videos, exercices, games and docs about piano",
+  "homepage": "https://github.com/Loufouh/piano-learning-interface#readme",
+  "bugs": {
+    "url": "https://github.com/Loufouh/piano-learning-interface/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Loufouh/piano-learning-interface.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Louis Masson",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "adsr": "^1.0.1",
+    "audio-loader": "^0.5.0",
+    "midimessage": "^1.0.5",
+    "note-parser": "^2.0.1",
+    "sample-player": "^0.5.5",
+    "soundfont-player": "^0.12.0"
+  },
+  "devDependencies": {}
+}
