@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 
 import authRouter from "./auth.js";
+import spaceRouter from "./space.js";
 
 const app = express();
 app.use(express.json());
@@ -23,5 +24,6 @@ app.use(
 );
 
 app.use("/auth", authRouter);
+app.use("/space", spaceRouter);
 
 export default app;
