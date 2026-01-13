@@ -1,5 +1,6 @@
 "use server";
 
+import Link from "next/link";
 import { apiGet } from "@/utils/api";
 import type { SpaceItemType } from "../types/SpaceItemType";
 
@@ -14,12 +15,13 @@ export default async function MySpace() {
 			<div className="flex flex-col items-center gap-12">
 				{items.map((item) => {
 					return (
-						<div
-							className="p-4 border-2 border-black rounded-2xl"
+						<Link
+							className="p-4 border-2 border-blue-600 hover:border-blue-400 rounded-2xl text-blue-600 hover:text-blue-400"
+							href={item.linkUrl}
 							key={item.id}
 						>
 							<p>{item.text}</p>
-						</div>
+						</Link>
 					);
 				})}
 			</div>
