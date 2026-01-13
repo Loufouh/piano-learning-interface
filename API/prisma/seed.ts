@@ -31,15 +31,20 @@ async function main() {
 		data: [
 			{
 				text: "Bonjour",
+				linkUrl:
+					"https://www.shutterstock.com/image-vector/bonjour-text-inscription-handwriting-banner-600nw-2427608041.jpg",
 			},
 			{
 				text: "Au revoir",
+				linkUrl: "https://www.google.com/search?q=au+revoir",
 			},
 			{
 				text: "Hé, je suis là aussi :3",
+				linkUrl: "https://youtu.be/s4ExNz_xgZ4?si=Ieh2KTKF3syK3z7K&t=26",
 			},
 			{
 				text: "Tu vas bien ? :eyes:",
+				linkUrl: "https://www.google.com/search?q=tu+vas+bien+%3Aeyes%3A",
 			},
 		],
 	});
