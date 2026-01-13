@@ -16,6 +16,8 @@ model SpaceItem {
   text  String
 
   spaceItemsOnUsers SpaceItemsOnUsers[]
+
+  @@map("spaceItem")
 }
 
 model SpaceItemsOnUsers {
