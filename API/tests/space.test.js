@@ -27,7 +27,11 @@ describe("GET /space/myItems", () => {
 		const connectedUser = connectUser(user);
 
 		await prisma.spaceItem.createMany({
-			data: [{ text: "item1" }, { text: "item2" }, { text: "item3" }],
+			data: [
+				{ text: "item1", linkUrl: "https://google.com" },
+				{ text: "item2", linkUrl: "https://item2.com" },
+				{ text: "item3", linkUrl: "https://item3.com" },
+			],
 		});
 		const items = await prisma.spaceItem.findMany({
 			orderBy: { id: "asc" },
@@ -48,12 +52,15 @@ describe("GET /space/myItems", () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body.items[0].id).toBe(items[1].id);
 		expect(response.body.items[0].text).toBe(items[1].text);
+		expect(response.body.items[0].linkUrl).toBe(items[1].linkUrl);
 
 		expect(response.body.items[1].id).toBe(items[0].id);
 		expect(response.body.items[1].text).toBe(items[0].text);
+		expect(response.body.items[1].linkUrl).toBe(items[0].linkUrl);
 
 		expect(response.body.items[2].id).toBe(items[2].id);
 		expect(response.body.items[2].text).toBe(items[2].text);
+		expect(response.body.items[2].linkUrl).toBe(items[2].linkUrl);
 	});
 	it("Should Return 401 if user not connected", async () => {
 		const response = await request(app).get("/space/myItems");
