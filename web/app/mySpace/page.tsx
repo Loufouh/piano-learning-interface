@@ -8,8 +8,6 @@ export default async function MySpace() {
 	const body = await response.json();
 	const items = body.items as SpaceItemType[];
 
-	console.log("response:", items);
-
 	return (
 		<div>
 			<h1 className="mb-10 font-bold text-3xl">My Space</h1>
