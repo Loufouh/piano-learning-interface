@@ -12,8 +12,9 @@ model User {
 }
 
 model SpaceItem {
-  id    Int @id @default(autoincrement())
-  text  String
+  id      Int @id @default(autoincrement())
+  text    String
+  linkUrl String
 
   spaceItemsOnUsers SpaceItemsOnUsers[]
 
