@@ -154,3 +154,53 @@ describe("GET /space/manager/itemsOfUser/:id", () => {
 		expect(response.statusCode).toBe(401);
 	});
 });
+
+describe("GET /space/manager/item/:id", () => {
+	it("Should Return the specified item", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		await prisma.spaceItem.createMany({
+			data: [{ text: "item", linkUrl: "https://google.com" }],
+		});
+		const item = await prisma.spaceItem.findFirst();
+
+		const response = await request(app)
+			.get(`/space/manager/item/${item.id}`)
+			.set("Authorization", `Bearer ${managerUser.token}`);
+
+		expect(response.statusCode).toBe(200);
+		expect(response.body.id).toBe(item.id);
+		expect(response.body.text).toBe(item.text);
+		expect(response.body.linkUrl).toBe(item.linkUrl);
+	});
+	it("Should Return 404 if user not found", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const nonExistingId = 1; // NonExisting, cause no item created
+
+		const response = await request(app)
+			.get(`/space/manager/item/${nonExistingId}`)
+			.set("Authorization", `Bearer ${managerUser.token}`);
+
+		expect(response.statusCode).toBe(404);
+	});
+	it("Should Return 401 if not authenticated as manager", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+
+		const response = await request(app)
+			.get(`/space/manager/item/1`)
+			.set("Authorization", `Bearer ${managerUser.token}`);
+
+		expect(response.statusCode).toBe(401);
+	});
+	it("Should Return 401 if not authenticated", async () => {
+		const response = await request(app).get(`/space/manager/item/1`);
+
+		expect(response.statusCode).toBe(401);
+	});
+});

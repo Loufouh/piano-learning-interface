@@ -55,4 +55,15 @@ router.get(
 	},
 );
 
+router.get("/manager/item/:id", authenticateManagerToken, async (req, res) => {
+	const itemId = parseInt(req.params.id, 10);
+	const item = await prisma.spaceItem.findUnique({ where: { id: itemId } });
+
+	if (!item) {
+		return res.status(404).json({ error: "Item not found" });
+	}
+
+	res.status(200).json(item);
+});
+
 export default router;
