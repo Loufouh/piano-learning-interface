@@ -204,3 +204,89 @@ describe("GET /space/manager/item/:id", () => {
 		expect(response.statusCode).toBe(401);
 	});
 });
+
+describe("PATCH /space/manager/item/:id", () => {
+	it("Should modify valid fields if specified", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.patch(`/space/manager/item/${item.id}`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				text: "newText",
+				linkUrl: "https://newLink.com",
+			});
+
+		const dbItem = await prisma.spaceItem.findUnique({
+			where: { id: item.id },
+		});
+
+		expect(response.statusCode).toBe(200);
+
+		expect(dbItem.text).toBe("newText");
+		expect(dbItem.linkUrl).toBe("https://newLink.com");
+	});
+	it("Should Return 404 if item not found", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const nonExistingId = 1; // NonExisting, cause no item created
+
+		const response = await request(app)
+			.patch(`/space/manager/item/${nonExistingId}`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				text: "newText",
+				linkUrl: "https://newLink.com",
+			});
+
+		expect(response.statusCode).toBe(404);
+	});
+	it("Should Return 401 if not authenticated as manager", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+
+		const response = await request(app)
+			.patch(`/space/manager/item/1`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				text: "newText",
+				linkUrl: "https://newLink.com",
+			});
+
+		expect(response.statusCode).toBe(401);
+	});
+	it("Should Return 401 if not authenticated", async () => {
+		const response = await request(app).get(`/space/manager/item/1`).send({
+			text: "newText",
+			linkUrl: "https://newLink.com",
+		});
+
+		expect(response.statusCode).toBe(401);
+	});
+	it("Should return 400 if unexpected fields/values are provided", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.patch(`/space/manager/item/${item.id}`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				bloup: "BLIIIIP",
+			});
+
+		expect(response.statusCode).toBe(400);
+	});
+});

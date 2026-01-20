@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import express from "express";
 import { authenticateManagerToken, authenticateToken } from "./auth.js";
 
@@ -65,5 +65,38 @@ router.get("/manager/item/:id", authenticateManagerToken, async (req, res) => {
 
 	res.status(200).json(item);
 });
+
+router.patch(
+	"/manager/item/:id",
+	authenticateManagerToken,
+	async (req, res) => {
+		const itemId = parseInt(req.params.id, 10);
+		const item = await prisma.spaceItem.findUnique({ where: { id: itemId } });
+
+		if (!item) {
+			return res.status(404).json({ error: "SpaceItem not found" });
+		}
+
+		try {
+			await prisma.spaceItem.update({
+				where: { id: itemId },
+				data: {
+					...req.body,
+				},
+			});
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientValidationError) {
+				return res
+					.status(400)
+					.json({ error: "Invalid data format for updating the spaceItem" });
+			}
+			return res
+				.status(500)
+				.json({ error: "An error occurred while updating the spaceItem" });
+		}
+
+		res.json();
+	},
+);
 
 export default router;
