@@ -6,6 +6,11 @@ export async function isConnected(): Promise<boolean> {
 	return res.ok;
 }
 
+export async function isManagerConnected(): Promise<boolean> {
+	const res = await apiGet("/auth/manager/checkToken");
+	return res.ok;
+}
+
 export async function getToken(): Promise<string> {
 	const cookieStore = await cookies();
 	const token = cookieStore.get("token")?.value || "";

@@ -3,6 +3,7 @@ import express from "express";
 
 import authRouter from "./auth.js";
 import spaceRouter from "./space.js";
+import userRouter from "./user.js";
 
 const app = express();
 app.use(express.json());
@@ -25,5 +26,6 @@ app.use(
 
 app.use("/auth", authRouter);
 app.use("/space", spaceRouter);
+app.use("/user", userRouter);
 
 export default app;
