@@ -435,3 +435,129 @@ describe("DELETE /space/manager/item/:id", () => {
 		expect(response.statusCode).toBe(401);
 	});
 });
+
+describe("POST /space/manager/linkItem/", () => {
+	it("Should create a corresponding spaceItemsOnUsers", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.post(`/space/manager/linkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: managerUser.id,
+				spaceItemId: item.id,
+				order: 0,
+			});
+
+		const dbLink = await prisma.spaceItemsOnUsers.findUnique({
+			where: {
+				userId_spaceItemId: {
+					userId: managerUser.id,
+					spaceItemId: item.id,
+				},
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+
+		expect(dbLink.userId).toBe(managerUser.id);
+		expect(dbLink.spaceItemId).toBe(item.id);
+		expect(dbLink.order).toBe(0);
+	});
+	it("Should return 404 if user not found", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.post(`/space/manager/linkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: managerUser.id + 1,
+				spaceItemId: item.id,
+				order: 0,
+			});
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body.error).toBe("User not found");
+	});
+	it("Should return 404 if item not found", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.post(`/space/manager/linkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: managerUser.id,
+				spaceItemId: item.id + 1,
+				order: 0,
+			});
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body.error).toBe("SpaceItem not found");
+	});
+	it("Should return 409 if already linked", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		await prisma.spaceItemsOnUsers.create({
+			data: {
+				userId: managerUser.id,
+				spaceItemId: item.id,
+				order: 0,
+			},
+		});
+
+		const response = await request(app)
+			.post(`/space/manager/linkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: managerUser.id,
+				spaceItemId: item.id,
+				order: 0,
+			});
+
+		expect(response.statusCode).toBe(409);
+		expect(response.body.error).toBe("Item already linked to user");
+	});
+	it("Should return 400 if a field is missing", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.post(`/space/manager/linkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				spaceItemId: item.id,
+			});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.body.error).toBe("Missing fields: userId, order");
+	});
+});

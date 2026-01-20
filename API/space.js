@@ -1,6 +1,8 @@
+import { th } from "@faker-js/faker";
 import { Prisma, PrismaClient } from "@prisma/client";
 import express from "express";
 import { authenticateManagerToken, authenticateToken } from "./auth.js";
+import { throwIfMissingField, verifyRequiredFields } from "./utils.js";
 
 const router = express.Router();
 const prisma = new PrismaClient({
@@ -132,5 +134,38 @@ router.delete(
 		res.status(200).json();
 	},
 );
+
+router.post("/manager/linkItem", authenticateManagerToken, async (req, res) => {
+	try {
+		throwIfMissingField(["userId", "spaceItemId", "order"], req);
+	} catch (error) {
+		return res.status(400).json({ error: error.message });
+	}
+
+	const user = await prisma.user.findUnique({ where: { id: req.body.userId } });
+	const item = await prisma.spaceItem.findUnique({
+		where: { id: req.body.spaceItemId },
+	});
+
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
+	if (!item) {
+		return res.status(404).json({ error: "SpaceItem not found" });
+	}
+
+	const searchLink = await prisma.spaceItemsOnUsers.findFirst({
+		where: { spaceItemId: req.body.spaceItemId, userId: req.body.userId },
+	});
+	if (searchLink) {
+		return res.status(409).json({ error: "Item already linked to user" });
+	}
+
+	await prisma.spaceItemsOnUsers.create({
+		data: req.body,
+	});
+
+	return res.status(200).json();
+});
 
 export default router;
