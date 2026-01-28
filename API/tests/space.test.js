@@ -561,3 +561,133 @@ describe("POST /space/manager/linkItem/", () => {
 		expect(response.body.error).toBe("Missing fields: userId, order");
 	});
 });
+
+describe("DELETE /space/manager/unlinkItem/:id", () => {
+	it("Should delete the corresponding spaceItemsOnUsers", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+		const itemOnUser = await prisma.spaceItemsOnUsers.create({
+			data: {
+				userId: managerUser.id,
+				spaceItemId: item.id,
+				order: 0,
+			},
+		});
+
+		const response = await request(app)
+			.delete(`/space/manager/unlinkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: itemOnUser.userId,
+				spaceItemId: itemOnUser.spaceItemId,
+			});
+
+		const dbLink = await prisma.spaceItemsOnUsers.findUnique({
+			where: {
+				userId_spaceItemId: {
+					userId: managerUser.id,
+					spaceItemId: item.id,
+				},
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+
+		expect(dbLink).toBeNull();
+	});
+	it("Should return 404 if link not found", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.delete(`/space/manager/unlinkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: managerUser.id,
+				spaceItemId: item.id,
+			});
+
+		expect(response.statusCode).toBe(404);
+	});
+	it("Should return 400 if a field is missing", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+		const itemOnUser = await prisma.spaceItemsOnUsers.create({
+			data: {
+				userId: managerUser.id,
+				spaceItemId: item.id,
+				order: 0,
+			},
+		});
+
+		const response = await request(app)
+			.delete(`/space/manager/unlinkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: itemOnUser.userId,
+			});
+
+		expect(response.statusCode).toBe(400);
+	});
+
+	it("Should return 401 if a not authenticated", async () => {
+		const user = await createUser();
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+		const itemOnUser = await prisma.spaceItemsOnUsers.create({
+			data: {
+				userId: user.id,
+				spaceItemId: item.id,
+				order: 0,
+			},
+		});
+
+		const response = await request(app)
+			.delete(`/space/manager/unlinkItem`)
+			.send({
+				userId: itemOnUser.userId,
+			});
+
+		expect(response.statusCode).toBe(401);
+	});
+	it("Should return 401 if a not authenticated as a manager", async () => {
+		const user = await createUser();
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+		const itemOnUser = await prisma.spaceItemsOnUsers.create({
+			data: {
+				userId: user.id,
+				spaceItemId: item.id,
+				order: 0,
+			},
+		});
+
+		const response = await request(app)
+			.delete(`/space/manager/unlinkItem`)
+			.set("Authorization", `Bearer ${user.token}`)
+			.send({
+				userId: itemOnUser.userId,
+			});
+
+		expect(response.statusCode).toBe(401);
+	});
+});

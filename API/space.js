@@ -167,4 +167,39 @@ router.post("/manager/linkItem", authenticateManagerToken, async (req, res) => {
 	return res.status(200).json();
 });
 
+router.delete(
+	"/manager/unlinkItem/",
+	authenticateManagerToken,
+	async (req, res) => {
+		try {
+			throwIfMissingField(["userId", "spaceItemId"], req);
+		} catch (error) {
+			return res.status(400).json({ error: error.message });
+		}
+
+		const link = await prisma.spaceItemsOnUsers.findUnique({
+			where: {
+				userId_spaceItemId: {
+					userId: req.body.userId,
+					spaceItemId: req.body.spaceItemId,
+				},
+			},
+		});
+
+		if (!link) {
+			return res.status(404).json({ error: "Link not found" });
+		}
+
+		await prisma.spaceItemsOnUsers.delete({
+			where: {
+				userId_spaceItemId: {
+					userId: req.body.userId,
+					spaceItemId: req.body.spaceItemId,
+				},
+			},
+		});
+		return res.status(200).json();
+	},
+);
+
 export default router;
