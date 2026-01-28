@@ -1,4 +1,3 @@
-import { th } from "@faker-js/faker";
 import { Prisma, PrismaClient } from "@prisma/client";
 import express from "express";
 import { authenticateManagerToken, authenticateToken } from "./auth.js";
