@@ -560,6 +560,42 @@ describe("POST /space/manager/linkItem/", () => {
 		expect(response.statusCode).toBe(400);
 		expect(response.body.error).toBe("Missing fields: userId, order");
 	});
+	it("Should return 401 if not authenticated", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+		managerUser = await promoteToManager(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app).post(`/space/manager/linkItem`).send({
+			userId: managerUser.id,
+			spaceItemId: item.id,
+			order: 0,
+		});
+
+		expect(response.statusCode).toBe(401);
+	});
+	it("Should return 401 if not authenticated as manager", async () => {
+		let managerUser = await createUser();
+		managerUser = connectUser(managerUser);
+
+		const item = await prisma.spaceItem.create({
+			data: { text: "item", linkUrl: "https://google.com" },
+		});
+
+		const response = await request(app)
+			.post(`/space/manager/linkItem`)
+			.set("Authorization", `Bearer ${managerUser.token}`)
+			.send({
+				userId: managerUser.id,
+				spaceItemId: item.id,
+				order: 0,
+			});
+
+		expect(response.statusCode).toBe(401);
+	});
 });
 
 describe("DELETE /space/manager/unlinkItem/:id", () => {
