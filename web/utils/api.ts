@@ -14,8 +14,11 @@ export async function apiPatch(route: string, rawBody: any): Promise<Response> {
 	return await apiFetch_rawBody("PATCH", route, rawBody);
 }
 
-export async function apiDelete(route: string): Promise<Response> {
-	return await apiFetch_rawBody("DELETE", route);
+export async function apiDelete(
+	route: string,
+	rawBody: any,
+): Promise<Response> {
+	return await apiFetch_rawBody("DELETE", route, rawBody);
 }
 
 export async function apiFetch_rawBody(
