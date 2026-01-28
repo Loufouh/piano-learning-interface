@@ -28,7 +28,7 @@ export default async function ManageSpace({
 				<button type="button"></button>
 				{spaceItems.map((item: SpaceItemType) => (
 					<div key={item.id} className="items-center gap-3 grid grid-cols-5">
-						<DeleteItemButton itemId={item.id} userId={id} />
+						<DeleteItemButton itemId={item.id} userId={Number(id)} />
 						<Link
 							className="col-span-3 p-4 border-2 border-blue-600 hover:border-blue-400 rounded-2xl text-blue-600 hover:text-blue-400"
 							href={item.linkUrl}

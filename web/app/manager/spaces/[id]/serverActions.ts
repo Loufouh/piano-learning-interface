@@ -1,6 +1,6 @@
 "use server";
 
-import { apiPost } from "@/utils/api";
+import { apiDelete, apiPost } from "@/utils/api";
 
 export async function addNewItemToSpace(userId: number) {
 	const createItemResponse = await apiPost("/space/manager/item", {
@@ -16,5 +16,10 @@ export async function addNewItemToSpace(userId: number) {
 	});
 }
 export async function deleteItemFromSpace(itemId: number, userId: number) {
-	return;
+	const linkRes = await apiDelete("/space/manager/unlinkItem", {
+		userId,
+		spaceItemId: itemId,
+	});
+
+	const itemRes = await apiDelete(`/space/manager/item/${itemId}`);
 }
